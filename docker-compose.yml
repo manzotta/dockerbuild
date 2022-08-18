@@ -1,0 +1,33 @@
+version: "3.2"
+services:
+  reverseproxy:
+    build:
+      context: .
+      dockerfile: reverseproxy.dckrf
+    image: jlin/nginx-reverseproxy
+    ports:
+      - "8080:8080"
+    hostname: nginx-proxy
+    stdin_open: true
+    tty: true
+    networks:
+      - backend
+
+  webserver:
+    depends_on:
+        - reverseproxy
+    build:
+      context: .
+      dockerfile: webserver.dckrf
+    image: jlin/nginx-webserver
+    ports:
+      - "80:80"
+    hostname: nginx-webserver
+    stdin_open: true
+    tty: true
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
